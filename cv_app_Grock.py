@@ -9,15 +9,18 @@ from pathlib import Path
 from groq import Groq
 
 # ============ CONFIGURATION ============
+# ============ CONFIGURATION ============
 load_dotenv()
 
-API_KEY = os.getenv('GROQ_API_KEY')
-if not API_KEY:
-    st.error("❌ GROQ_API_KEY לא נמצא בקובץ .env")
-    st.stop()
+# מנגנון חכם: קודם בודק בכספת של הענן, ואם אין - בודק בקובץ המקומי
+if "GROQ_API_KEY" in st.secrets:
+    API_KEY = st.secrets["GROQ_API_KEY"]
+else:
+    API_KEY = os.getenv('GROQ_API_KEY')
 
-# אתחול הלקוח של Groq
-client = Groq(api_key=API_KEY)
+if not API_KEY:
+    st.error("❌ GROQ_API_KEY לא נמצא בהגדרות הענן או בקובץ .env מקומי")
+    st.stop()
 
 # ============ LATEX UTILS ============
 def escape_latex(text):
